@@ -1,35 +1,32 @@
 <template>
   <div>
-    <div id="computer" :style="computStyleObject"></div>
+    <div id="computer" :style="computerChangeObject"></div>
     <div>
-      <button @click="onClickBtn('바위')">바위</button>
-      <button @click="onClickBtn('가위')">가위</button>
-      <button @click="onClickBtn('보')">보</button>
+      <button @click="onClick('바위')">바위</button>
+      <button @click="onClick('가위')">가위</button>
+      <button @click="onClick('보')">보</button>
     </div>
     <div>{{ result }}</div>
-    <div>현재 {{ score }}점</div>
+    <div>평균점수: {{ score }}점</div>
   </div>
 </template>
 
 <script>
-const rspCoord = {
+const rpsCood = {
   바위: "0",
   가위: "-142px",
   보: "-284px",
 };
 
-const scores = {
+const score = {
   가위: 1,
   바위: 0,
   보: -1,
 };
 
-const computerChoice = (imgcoord) => {
-  return Object.entries(rspCoord).find(function(v) {
-    // console.log(Object.entries(rspCoord));
-    // console.log("v1:", v[1]);
-    // console.log("v1-img", v[1] === imgcoord);
-    return v[1] === imgcoord;
+const computerChoice = (imgCood) => {
+  return Object.entries(rpsCood).find((v) => {
+    return v[1] === imgCood;
   })[0];
 };
 
@@ -38,38 +35,38 @@ let interval = null;
 export default {
   data() {
     return {
-      imgCoord: rspCoord.바위,
+      imgCood: rpsCood.바위,
       result: "",
       score: 0,
     };
   },
-
   computed: {
-    computStyleObject() {
+    computerChangeObject() {
       return {
-        background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${this.imgCoord} 0`,
+        background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${this.imgCood} 0`,
       };
     },
   },
 
   methods: {
-    changeHande() {
+    changeHand() {
       interval = setInterval(() => {
-        if (this.imgCoord === rspCoord.바위) {
-          this.imgCoord = rspCoord.가위;
-        } else if (this.imgCoord === rspCoord.가위) {
-          this.imgCoord = rspCoord.보;
-        } else if (this.imgCoord === rspCoord.보) {
-          this.imgCoord = rspCoord.바위;
+        if (this.imgCood === rpsCood.바위) {
+          this.imgCood = rpsCood.가위;
+        } else if (this.imgCood === rpsCood.가위) {
+          this.imgCood = rpsCood.보;
+        } else if (this.imgCood === rpsCood.보) {
+          this.imgCood = rpsCood.바위;
         }
       }, 100);
     },
 
-    onClickBtn(choice) {
+    onClick(choice) {
       clearInterval(interval);
-      const myScore = scores[choice];
-      const cpuScore = scores[computerChoice(this.imgCoord)];
-      const diff = myScore - cpuScore;
+      const myScore = score[choice];
+      const computerScore = score[computerChoice(this.imgCood)];
+      const diff = myScore - computerScore;
+
       if (diff === 0) {
         this.result = "비겼습니다";
       } else if ([-1, 2].includes(diff)) {
@@ -79,17 +76,18 @@ export default {
         this.result = "졌습니다";
         this.score -= 1;
       }
+
       setTimeout(() => {
-        this.changeHande();
-      }, 1300);
+        this.changeHand();
+      }, 1000);
     },
   },
 
   mounted() {
-    this.changeHande();
+    this.changeHand();
   },
 
-  beforeDestroy() {
+  destroyed() {
     clearInterval(interval);
   },
 };
